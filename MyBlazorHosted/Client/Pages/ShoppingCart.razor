@@ -1,0 +1,88 @@
+﻿@page "/cart"
+@using MyBlazorHosted.Client.Components;
+@using MyBlazorHosted.Client.Shared.Template;
+@using Microsoft.Extensions.Localization;
+@using MyBlazorHosted.Libraries.ShoppingCart;
+@using MyBlazorHosted.Libraries.ShoppingCart.Models;
+@using System.Globalization;
+@inject IShoppingCartService shoppingCartService
+@inject IStringLocalizer<ShoppingCart> _localizer
+
+<PageTitle>@_localizer["Title"]</PageTitle>
+<div class="row">
+    <h1>@_localizer["Title"]</h1>
+    <TableTemplate HeaderNames="@tableHeaderNames">
+        <RowTemplate>
+            @foreach (var item in shoppingCartService.Get().Items)
+            {
+                <tr>
+                    <td colspan="2">
+                        <img src="/Images/@item.Product.Image" style="max-width:120px" class="card-img-top" alt="@item.Product.Name<">
+                    </td>
+                    <td>@item.Product.Name</td>
+                    <td>@item.Quantity</td>
+                    <td>@item.Price</td>
+                    <td>@item.TotalPrice</td>
+                    <td>
+                        <button class="btn btn-outline-danger" @onclick="() => DeleteItem(item)">X</button>
+                    </td>
+                </tr>
+            }
+        </RowTemplate>
+    </TableTemplate>
+    @* @if (shoppingCartService.Get().Items.Any())
+    {
+        <table class="table table-bordered table-striped">
+            <tr>
+                <th>تصویر</th>
+                <th>نام</th>
+                <th>تعداد</th>
+                <th>قیمت</th>
+                <th>جمع</th>
+                <th>حذف از سبد خرید</th>
+            </tr>
+            @foreach (var item in shoppingCartService.Get().Items)
+            {
+                <tr>
+                    <td>
+                        <img src="/Images/@item.Product.Image" style="max-width:120px" class="card-img-top" alt="@item.Product.Name<">
+                    </td>
+                    <td>@item.Product.Name</td>
+                    <td>@item.Quantity</td>
+                    <td>@item.Price</td>
+                    <td>@item.TotalPrice</td>
+                    <td>
+                        <button class="btn btn-outline-danger" @onclick="() => DeleteItem(item)">X</button>
+                    </td>
+                </tr>
+            }
+        </table>
+    } *@
+</div>
+
+@code{
+    [CascadingParameter(Name = "ShopingCartCountModel")]
+    private ShopingCartCountModel? shopingCartCountModel { get; set; }
+
+    List<TableHeaderName> tableHeaderNames = new()
+    {
+        new TableHeaderName("Image",2),
+        new TableHeaderName("Name",1),
+        new TableHeaderName("Count",1),
+        new TableHeaderName("Price",1),
+        new TableHeaderName("Jam",1),
+        new TableHeaderName("Delete",1)
+    };
+}
+
+@functions{
+    private void DeleteItem(ShoppingCartItemModel item)
+    {
+        shoppingCartService.DeleteProduct(item);
+
+        if (shopingCartCountModel != null)
+        {
+            shopingCartCountModel.OnCountChange();
+        }
+    }
+}

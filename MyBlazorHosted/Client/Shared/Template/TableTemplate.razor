@@ -1,0 +1,37 @@
+﻿@using MyBlazorHosted.Client.Components;
+@using MyBlazorHosted.Client.Pages;
+@using Microsoft.Extensions.Localization;
+@using System.Globalization;
+@inject IStringLocalizer<ShoppingCart> _localizer
+
+<table class="table table-bordered table-striped">
+    @if (HeaderNames?.Any() ?? false)
+    {
+        <thead>
+            <tr>
+                @foreach (var item in HeaderNames)
+                {
+                    <th colspan="@item.Colspan" scope="col">
+                        @_localizer[item.Name]
+                    </th>
+                }
+            </tr>
+        </thead>
+        <tbody>
+            @if (RowTemplate != null)
+            {
+                @RowTemplate
+            }
+        </tbody>
+    }
+</table>
+
+
+@code
+{
+    [Parameter]
+    public IReadOnlyList<TableHeaderName>? HeaderNames { get; set; }
+
+    [Parameter]
+    public RenderFragment? RowTemplate { get; set; }
+}

@@ -1,0 +1,73 @@
+﻿@page "/"
+@using MyBlazorHosted.Libraries.Product;
+@using MyBlazorHosted.Libraries.Product.Models;
+@inject NavigationManager navigationManager
+@inject IConfiguration configuration
+@inject IProductService productService
+
+<PageTitle>لیست محصولات</PageTitle>
+<HeadContent>
+    <meta name="description" content="ایشون لیست محصولات هستند" />
+</HeadContent>
+
+<Ads Title="@configuration["Ads:Name"]"
+     Description="@configuration["Ads:Description"]"
+     Image="@configuration["Ads:Image"]"
+     Background="@configuration["Ads:BackgroundColor"]" />
+
+@if (Products?.Any() ?? false)
+{
+    <h2>آخرین محصولات ما</h2>
+    <hr />
+    <div class="row">
+        @foreach (var product in Products)
+        {
+            <ProductItem Product="product" />
+        }
+    </div>
+    <div class="row">
+        @if (TotalPageCount > 1)
+        {
+            <ul class="pagination">
+                @for (int page = 1; page <= TotalPageCount; page++)
+                {
+                    <li class="page-item">
+                        <a class="page-link" href="@navigationManager.GetUriWithQueryParameter("page",page)">@(page)</a>
+                    </li>
+                }
+            </ul>
+        }
+    </div>
+}
+
+@code {
+    public IList<ProductModel>? Products { get; set; }
+
+    [Parameter, SupplyParameterFromQuery]
+    public int? Page { get; set; }
+
+    public int? TotalPageCount { get; set; }
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+    }
+
+}
+
+@functions
+{
+    protected override void OnParametersSet()
+    {
+        //int pagesSize = int.Parse(configuration["ProductListing:PageSize"]);
+        var productConfig = configuration.GetSection("ProductListing");
+
+        var pageSize = productConfig.GetValue<int>("PageSize");
+
+        Products = productService.GetAll(pageSize, Page ?? 1);
+
+        TotalPageCount = productService.GetTotalPageCount(pageSize);
+
+        base.OnParametersSet();
+    }
+}
