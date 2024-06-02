@@ -1,9 +1,8 @@
 ﻿@page "/"
-@using MyBlazorHosted.Libraries.Product;
 @using MyBlazorHosted.Libraries.Product.Models;
 @inject NavigationManager navigationManager
 @inject IConfiguration configuration
-@inject IProductService productService
+@inject HttpClient _HttpClient
 
 <PageTitle>لیست محصولات</PageTitle>
 <HeadContent>
@@ -52,22 +51,32 @@
     {
         base.OnInitialized();
     }
-
 }
 
 @functions
 {
-    protected override void OnParametersSet()
+    protected override async Task OnParametersSetAsync()
     {
         //int pagesSize = int.Parse(configuration["ProductListing:PageSize"]);
         var productConfig = configuration.GetSection("ProductListing");
 
         var pageSize = productConfig.GetValue<int>("PageSize");
 
-        Products = productService.GetAll(pageSize, Page ?? 1);
+        Products = await _HttpClient.GetFromJsonAsync<IList<ProductModel>>(
+            string.Format(
+                "/api/Product?size{0}&page{1}",
+                pageSize,
+                Page??1
+            )
+        );
 
-        TotalPageCount = productService.GetTotalPageCount(pageSize);
+        TotalPageCount = await _HttpClient.GetFromJsonAsync<int>(
+            string.Format(
+                "/api/Product/total-page-count?size{0}",
+                pageSize
+            )
+        );
 
-        base.OnParametersSet();
+        await base.OnParametersSetAsync();
     }
 }

@@ -11,6 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\MyBlazorHosted.Libraries\MyBlazorHosted.Libraries.csproj" />
     <ProjectReference Include="..\Client\MyBlazorHosted.Client.csproj" />
     <ProjectReference Include="..\Shared\MyBlazorHosted.Shared.csproj" />
   </ItemGroup>

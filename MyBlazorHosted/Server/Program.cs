@@ -1,4 +1,7 @@
 using Microsoft.AspNetCore.ResponseCompression;
+using MyBlazorHosted.Libraries.Product;
+using MyBlazorHosted.Libraries.ShoppingCart;
+using MyBlazorHosted.Libraries.Storage;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -6,6 +9,10 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
+
+builder.Services.AddSingleton<IStorageService, StorageService>();
+builder.Services.AddSingleton<IProductService, ProductService>();
+builder.Services.AddSingleton<IShoppingCartService, ShoppingCartService>();
 
 var app = builder.Build();
 

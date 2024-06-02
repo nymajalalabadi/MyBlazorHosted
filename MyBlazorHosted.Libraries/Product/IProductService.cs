@@ -1,6 +1,4 @@
-﻿
-
-using MyBlazorHosted.Libraries.Product.Models;
+﻿using MyBlazorHosted.Libraries.Product.Models;
 
 namespace MyBlazorHosted.Libraries.Product
 {

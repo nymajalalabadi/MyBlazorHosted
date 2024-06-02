@@ -1,11 +1,6 @@
 ﻿using MyBlazorHosted.Libraries.Product.Models;
 using MyBlazorHosted.Libraries.ShoppingCart.Models;
 using MyBlazorHosted.Libraries.Storage;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MyBlazorHosted.Libraries.ShoppingCart
 {
@@ -61,5 +56,4 @@ namespace MyBlazorHosted.Libraries.ShoppingCart
             return shoppingCart.Items.Any(i => i.Product.Sku == sku);
         }
     }
-
 }

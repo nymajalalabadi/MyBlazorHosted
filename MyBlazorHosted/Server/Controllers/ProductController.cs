@@ -41,10 +41,12 @@ namespace MyBlazorHosted.Server.Controllers
         public IActionResult GetBySlug(string slug)
         {
             var product = _productService.GetProductBySlug(slug);
+
             if (product == null)
             {
                 return NotFound(string.Format("The Slug '{0}' could not be found", slug));
             }
+
             return Ok(product);
         }
 

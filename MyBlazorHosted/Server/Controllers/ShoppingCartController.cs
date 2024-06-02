@@ -2,6 +2,7 @@
 using MyBlazorHosted.Libraries.Product;
 using MyBlazorHosted.Libraries.ShoppingCart;
 using MyBlazorHosted.Libraries.ShoppingCart.Models;
+using MyBlazorHosted.Shared.Models;
 
 namespace MyBlazorHosted.Server.Controllers
 {
@@ -30,7 +31,7 @@ namespace MyBlazorHosted.Server.Controllers
 
         [HttpGet("count")]
         public int GetCount()
-        {
+        { 
             return _shoppingCartService.Count();
         }
 
