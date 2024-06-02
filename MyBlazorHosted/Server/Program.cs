@@ -14,6 +14,20 @@ builder.Services.AddSingleton<IStorageService, StorageService>();
 builder.Services.AddSingleton<IProductService, ProductService>();
 builder.Services.AddSingleton<IShoppingCartService, ShoppingCartService>();
 
+#region Add Cors
+
+//builder.Services.AddCors(option =>
+//{
+//    option.AddPolicy("blazorWasm", policy =>
+//    {
+//        policy.WithOrigins("https://localhost:7249")
+//        .AllowAnyHeader()
+//        .AllowAnyMethod();
+//    });
+//});
+
+#endregion
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -35,6 +49,11 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+#region MyRegion
+
+//app.UseCors("blazorWasm");
+
+#endregion
 
 app.MapRazorPages();
 app.MapControllers();

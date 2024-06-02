@@ -64,7 +64,7 @@
 
         Products = await _HttpClient.GetFromJsonAsync<IList<ProductModel>>(
             string.Format(
-                "/api/Product?size{0}&page{1}",
+                "/api/Product?size={0}&page={1}",
                 pageSize,
                 Page??1
             )
@@ -72,7 +72,7 @@
 
         TotalPageCount = await _HttpClient.GetFromJsonAsync<int>(
             string.Format(
-                "/api/Product/total-page-count?size{0}",
+                "/api/Product/total-page-count?size={0}",
                 pageSize
             )
         );
