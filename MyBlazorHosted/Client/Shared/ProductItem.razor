@@ -1,10 +1,9 @@
 ﻿@using MyBlazorHosted.Libraries.Product.Models;
-@using MyBlazorHosted.Libraries.ShoppingCart;
 @using MyBlazorHosted.Libraries.ShoppingCart.Models;
-@inject IShoppingCartService shoppingCartService
+@using MyBlazorHosted.Shared.Models;
 @inject NavigationManager navigationManager;
 @inject HttpClient _HttpClient
-@implements IProductAddToCart
+
 
 <div class="card col-3 m-2" style="width: 18rem;padding:0">
     <img src="/Images/@Product?.Image" style="width:100%" class="card-img-top" alt="...">
@@ -17,7 +16,7 @@
             <input @bind="Quantity" type="number" placeholder="تعداد؟" class="form-control" />
 
             <button class="btn btn-outline-success mt-2" @onclick="AddToCart">
-                @if (shoppingCartService.HasProduct(Product.Sku))
+                @if (HasProductInCart)
                 {
                     <span>
                         اضافه به سبد خرید
@@ -66,8 +65,38 @@
         await base.OnParametersSetAsync();
     }
 
-    public void AddToCart()
+    public async Task AddToCart()
     {
+        if (Product != null)
+        {
+            if (!HasProductInCart)
+            {
+                await _HttpClient.PostAsJsonAsync("/api/ShoppingCart", new ShoppingCartAddModel()
+                {
+                    ProductSku = Product.Sku,
+                    Quantity = Quantity ?? 1
+                });
+            }
+            else
+            {
+                await _HttpClient.PutAsJsonAsync("/api/ShoppingCart", new ShoppingCartAddModel()
+                {
+                        ProductSku = Product.Sku,
+                        Quantity = Quantity ?? 1
+                });
+            }
 
+            HasProductInCart = await _HttpClient.GetFromJsonAsync<bool>(
+                "/api/ShoppingCart/has-product/" + Product.Sku
+                );
+
+            Quantity = null;
+
+            if (shopingCartCountModel != null)
+            {
+                shopingCartCountModel.OnCountChange();
+            }
+        }
+        navigationManager.NavigateTo("/cart");
     }
 }

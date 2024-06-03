@@ -56,6 +56,21 @@ namespace MyBlazorHosted.Server.Controllers
             return Ok(new { Success = true });
         }
 
+        [HttpPut]
+        public IActionResult UpdateProduct(ShoppingCartAddModel shoppingCartAdd)
+        {
+            var product = !string.IsNullOrWhiteSpace(shoppingCartAdd.ProductSku) ? _productService.GetProduct(shoppingCartAdd.ProductSku) : null;
+
+            if (product == null)
+            {
+                return NotFound();
+            }
+
+            _shoppingCartService.AddProduct(product, shoppingCartAdd.Quantity);
+
+            return Ok(new { Success = true });
+        }
+
         [HttpDelete]
         public IActionResult DeleteProduct(string sku)
         {
