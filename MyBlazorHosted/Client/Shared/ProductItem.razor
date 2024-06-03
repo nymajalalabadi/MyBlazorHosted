@@ -3,6 +3,7 @@
 @using MyBlazorHosted.Libraries.ShoppingCart.Models;
 @inject IShoppingCartService shoppingCartService
 @inject NavigationManager navigationManager;
+@inject HttpClient _HttpClient
 @implements IProductAddToCart
 
 <div class="card col-3 m-2" style="width: 18rem;padding:0">
@@ -42,37 +43,31 @@
     [Parameter]
     public ProductModel? Product { get; set; }
 
+    private bool HasProductInCart { get; set; }
+
     public int? Quantity { get; set; }
 
     [CascadingParameter(Name = "ShopingCartCountModel")]
     private ShopingCartCountModel? shopingCartCountModel { get; set; }
 
-    // [SupplyParameterFromQuery]
-    // [Parameter, SupplyParameterFromQuery]
-    // [Parameter, SupplyParameterFromQuery(Name ="SeneKarber")]
-    // public string Age { get; set; }
-
-    // protected override void OnParametersSet()
-    // {
-    //     base.OnParametersSet();
-    // }
 }
 
 @functions
 {
-    public void AddToCart()
+    protected override async Task OnParametersSetAsync()
     {
         if (Product != null)
         {
-            shoppingCartService.AddProduct(Product, Quantity ?? 1);
-            Quantity = null;
-
-            if (shopingCartCountModel != null)
-            {
-                shopingCartCountModel.OnCountChange();
-            }
+            HasProductInCart = await _HttpClient.GetFromJsonAsync<bool>(
+                "/api/ShoppingCart/has-product/" + Product.Sku
+                );
         }
 
-        navigationManager.NavigateTo("/cart");
+        await base.OnParametersSetAsync();
+    }
+
+    public void AddToCart()
+    {
+
     }
 }
