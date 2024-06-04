@@ -1,10 +1,9 @@
 ﻿@page "/product/{slug}"
-@using MyBlazorHosted.Libraries.Product;
 @using MyBlazorHosted.Libraries.Product.Models;
-@using MyBlazorHosted.Libraries.ShoppingCart;
 @using MyBlazorHosted.Libraries.ShoppingCart.Models;
-@inject IProductService productService
-@inject IShoppingCartService shoppingCartService
+@using MyBlazorHosted.Shared.Models;
+@inject HttpClient _HttpClient
+@inject NavigationManager navigationManager
 
 @if (Product != null)
 {
@@ -44,7 +43,7 @@ else
                 </div>
                     <div class="col-3">
                         <button class="btn btn-outline-primary">
-                            @if (shoppingCartService.HasProduct(Product.Sku))
+                            @if (HasProductInCart)
                             {
                                 <span>
                                     اضافه به سبد خرید
@@ -88,6 +87,8 @@ else
     [Parameter]
     public string? slug { get; set; }
 
+    private bool HasProductInCart { get; set; }
+
     ProductAddToCartModel productAddToCartModel = new ProductAddToCartModel();
 
     [CascadingParameter(Name = "ShopingCartCountModel")]
@@ -97,33 +98,58 @@ else
 
 @functions 
 {
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
-        ListProduct = productService.GetAll();
+        ListProduct = await _HttpClient.GetFromJsonAsync<IList<ProductModel>>(
+            "/api/Product"
+        );
 
-        if (!string.IsNullOrEmpty(slug))
-        {
-            Product = productService.GetProductBySlug(slug);
-        }
-
-        base.OnInitialized();
+        await base.OnInitializedAsync();
     }
 
-    protected override void OnParametersSet()
+    protected override async Task OnParametersSetAsync()
     {
         if (!string.IsNullOrEmpty(slug))
         {
-            Product = productService.GetProductBySlug(slug);
+            Product = await _HttpClient.GetFromJsonAsync<ProductModel>(
+                "/api/Product/by-slug/" + slug
+            );
+
+            if (Product != null)
+            {
+                HasProductInCart = await _HttpClient.GetFromJsonAsync<bool>(
+                    "/api/ShoppingCart/has-product/" + Product.Sku
+                    );
+            }
         }
 
-        base.OnParametersSet();
+        await base.OnParametersSetAsync();
     }
 
-    public void AddToCart()
+    public async Task AddToCart()
     {
         if (Product != null)
         {
-            shoppingCartService.AddProduct(Product, productAddToCartModel.Quantity ?? 1);
+            if (!HasProductInCart)
+            {
+                await _HttpClient.PostAsJsonAsync("/api/ShoppingCart", new ShoppingCartAddModel()
+                {
+                    ProductSku = Product.Sku,
+                    Quantity = productAddToCartModel.Quantity ?? 1
+                });
+            }
+            else
+            {
+                await _HttpClient.PutAsJsonAsync("/api/ShoppingCart", new ShoppingCartAddModel()
+                {
+                        ProductSku = Product.Sku,
+                        Quantity = productAddToCartModel.Quantity ?? 1
+                });
+            }
+
+            HasProductInCart = await _HttpClient.GetFromJsonAsync<bool>(
+                "/api/ShoppingCart/has-product/" + Product.Sku
+                );
 
             productAddToCartModel.Quantity = null;
 
@@ -132,5 +158,6 @@ else
                 shopingCartCountModel.OnCountChange();
             }
         }
+        navigationManager.NavigateTo("/cart");
     }
 }
