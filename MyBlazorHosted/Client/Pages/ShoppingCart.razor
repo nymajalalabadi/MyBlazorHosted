@@ -79,17 +79,17 @@
         new TableHeaderName("Jam",1),
         new TableHeaderName("Delete",1)
     };
+}
 
+@functions
+{
     protected override async Task OnInitializedAsync()
     {
         shoppingCartModel = await _HttpClient.GetFromJsonAsync<ShoppingCartModel?>("/api/ShoppingCart");
 
         await base.OnInitializedAsync();
     }
-}
 
-@functions
-{
     private async Task DeleteItem(ShoppingCartItemModel item)
     {
         if (item != null)
