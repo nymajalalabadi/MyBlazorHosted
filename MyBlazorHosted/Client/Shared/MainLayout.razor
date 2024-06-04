@@ -1,7 +1,7 @@
 ﻿@using MyBlazorHosted.Libraries.ShoppingCart;
 @using MyBlazorHosted.Libraries.ShoppingCart.Models;
 @inherits LayoutComponentBase
-@inject IShoppingCartService shoppingCartService
+@inject HttpClient _HttpClient
 
 <CascadingValue Value="@shopingCartCountModel" Name="ShopingCartCountModel">
 <Header />
@@ -14,13 +14,13 @@
 @code{
     ShopingCartCountModel? shopingCartCountModel { get; set; }
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
         shopingCartCountModel = new ShopingCartCountModel();
 
-        shopingCartCountModel.Count = shoppingCartService.Count();
+        shopingCartCountModel.Count = await _HttpClient.GetFromJsonAsync<int>("/api/ShoppingCart/count");
 
-        base.OnInitialized();
+        await base.OnInitializedAsync();
     }
 
 }

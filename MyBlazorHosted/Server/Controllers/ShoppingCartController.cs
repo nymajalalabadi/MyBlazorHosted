@@ -71,7 +71,7 @@ namespace MyBlazorHosted.Server.Controllers
             return Ok(new { Success = true });
         }
 
-        [HttpDelete]
+        [HttpDelete("{sku}")]
         public IActionResult DeleteProduct(string sku)
         {
             var cart = _shoppingCartService.Get();

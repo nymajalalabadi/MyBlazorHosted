@@ -92,11 +92,14 @@
 {
     private async Task DeleteItem(ShoppingCartItemModel item)
     {
-        // await _HttpClient.DeleteAsync("/api/ShoppingCart", item.Product.Sku);
-
-        if (shopingCartCountModel != null)
+        if (item != null)
         {
-            shopingCartCountModel.OnCountChange();
+            await _HttpClient.DeleteAsync("/api/ShoppingCart/" + item.Product.Sku);
+
+            if (shopingCartCountModel != null)
+            {
+                shopingCartCountModel.OnCountChange();
+            }
         }
     }
 }
