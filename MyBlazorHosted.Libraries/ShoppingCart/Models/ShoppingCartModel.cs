@@ -13,7 +13,7 @@ namespace MyBlazorHosted.Libraries.ShoppingCart.Models
             Items = new List<ShoppingCartItemModel>();
         }
 
-        public IList<ShoppingCartItemModel> Items { get; }
+        public IList<ShoppingCartItemModel> Items { get; init;}
     }
 
 }

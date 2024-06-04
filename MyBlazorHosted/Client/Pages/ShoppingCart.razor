@@ -5,7 +5,7 @@
 @using MyBlazorHosted.Libraries.ShoppingCart;
 @using MyBlazorHosted.Libraries.ShoppingCart.Models;
 @using System.Globalization;
-@inject IShoppingCartService shoppingCartService
+@inject HttpClient _HttpClient
 @inject IStringLocalizer<ShoppingCart> _localizer
 
 <PageTitle>@_localizer["Title"]</PageTitle>
@@ -13,20 +13,23 @@
     <h1>@_localizer["Title"]</h1>
     <TableTemplate HeaderNames="@tableHeaderNames">
         <RowTemplate>
-            @foreach (var item in shoppingCartService.Get().Items)
+            @if (shoppingCartModel?.Items != null)
             {
-                <tr>
-                    <td colspan="2">
-                        <img src="/Images/@item.Product.Image" style="max-width:120px" class="card-img-top" alt="@item.Product.Name<">
-                    </td>
-                    <td>@item.Product.Name</td>
-                    <td>@item.Quantity</td>
-                    <td>@item.Price</td>
-                    <td>@item.TotalPrice</td>
-                    <td>
-                        <button class="btn btn-outline-danger" @onclick="() => DeleteItem(item)">X</button>
-                    </td>
-                </tr>
+                @foreach (var item in shoppingCartModel.Items)
+                {
+                    <tr>
+                        <td colspan="2">
+                            <img src="/Images/@item.Product.Image" style="max-width:120px" class="card-img-top" alt="@item.Product.Name<">
+                        </td>
+                        <td>@item.Product.Name</td>
+                        <td>@item.Quantity</td>
+                        <td>@item.Price</td>
+                        <td>@item.TotalPrice</td>
+                        <td>
+                            <button class="btn btn-outline-danger" @onclick="() => DeleteItem(item)">X</button>
+                        </td>
+                    </tr>
+                }
             }
         </RowTemplate>
     </TableTemplate>
@@ -60,9 +63,12 @@
     } *@
 </div>
 
-@code{
+@code
+{
     [CascadingParameter(Name = "ShopingCartCountModel")]
     private ShopingCartCountModel? shopingCartCountModel { get; set; }
+
+    private ShoppingCartModel? shoppingCartModel { get; set; }
 
     List<TableHeaderName> tableHeaderNames = new()
     {
@@ -73,12 +79,20 @@
         new TableHeaderName("Jam",1),
         new TableHeaderName("Delete",1)
     };
+
+    protected override async Task OnInitializedAsync()
+    {
+        shoppingCartModel = await _HttpClient.GetFromJsonAsync<ShoppingCartModel?>("/api/ShoppingCart");
+
+        await base.OnInitializedAsync();
+    }
 }
 
-@functions{
-    private void DeleteItem(ShoppingCartItemModel item)
+@functions
+{
+    private async Task DeleteItem(ShoppingCartItemModel item)
     {
-        shoppingCartService.DeleteProduct(item);
+        // await _HttpClient.DeleteAsync("/api/ShoppingCart", item.Product.Sku);
 
         if (shopingCartCountModel != null)
         {
