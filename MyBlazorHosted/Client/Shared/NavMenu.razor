@@ -42,6 +42,7 @@
             shopingCartCountModel.CountChange += async () =>
             {
                 shopingCartCountModel.Count = await _HttpClient.GetFromJsonAsync<int>("/api/ShoppingCart/count");
+
                 StateHasChanged();
             };
         }

@@ -2,6 +2,7 @@
 using MyBlazorHosted.Libraries.Product;
 using MyBlazorHosted.Libraries.ShoppingCart;
 using MyBlazorHosted.Libraries.ShoppingCart.Models;
+using MyBlazorHosted.Server.Attributes;
 using MyBlazorHosted.Shared.Models;
 
 namespace MyBlazorHosted.Server.Controllers
@@ -23,25 +24,25 @@ namespace MyBlazorHosted.Server.Controllers
 
         #endregion
 
-        [HttpGet]
+        [HttpGet, RequiresAuthorizationHeader]
         public ShoppingCartModel GetCart()
         {
             return _shoppingCartService.Get();
         }
 
-        [HttpGet("count")]
+        [HttpGet("count"), RequiresAuthorizationHeader]
         public int GetCount()
         { 
             return _shoppingCartService.Count();
         }
 
-        [HttpGet("has-product/{sku}")]
+        [HttpGet("has-product/{sku}"), RequiresAuthorizationHeader]
         public bool HasProduct(string sku)
         {
             return _shoppingCartService.HasProduct(sku);
         }
 
-        [HttpPost]
+        [HttpPost, RequiresAuthorizationHeader]
         public IActionResult AddProduct(ShoppingCartAddModel shoppingCartAdd)
         {
             var product = !string.IsNullOrWhiteSpace(shoppingCartAdd.ProductSku) ? _productService.GetProduct(shoppingCartAdd.ProductSku) : null;
@@ -56,7 +57,7 @@ namespace MyBlazorHosted.Server.Controllers
             return Ok(new { Success = true });
         }
 
-        [HttpPut]
+        [HttpPut, RequiresAuthorizationHeader]
         public IActionResult UpdateProduct(ShoppingCartAddModel shoppingCartAdd)
         {
             var product = !string.IsNullOrWhiteSpace(shoppingCartAdd.ProductSku) ? _productService.GetProduct(shoppingCartAdd.ProductSku) : null;
@@ -71,7 +72,7 @@ namespace MyBlazorHosted.Server.Controllers
             return Ok(new { Success = true });
         }
 
-        [HttpDelete("{sku}")]
+        [HttpDelete("{sku}"), RequiresAuthorizationHeader]
         public IActionResult DeleteProduct(string sku)
         {
             var cart = _shoppingCartService.Get();
