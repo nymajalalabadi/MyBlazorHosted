@@ -2,8 +2,11 @@
 @using MyBlazorHosted.Libraries.Product.Models;
 @using MyBlazorHosted.Libraries.ShoppingCart.Models;
 @using MyBlazorHosted.Shared.Models;
+@using System.Text.Json
+@using System.Text
 @inject HttpClient _HttpClient
 @inject NavigationManager navigationManager
+@inject IConfiguration configuration
 
 @if (Product != null)
 {
@@ -132,19 +135,40 @@ else
         {
             if (!HasProductInCart)
             {
-                await _HttpClient.PostAsJsonAsync("/api/ShoppingCart", new ShoppingCartAddModel()
-                {
-                    ProductSku = Product.Sku,
-                    Quantity = productAddToCartModel.Quantity ?? 1
-                });
+                var request = new HttpRequestMessage(HttpMethod.Post, "/api/ShoppingCart");
+
+                request.Headers.Add("Authorization", configuration.GetValue<string>("ApiKey"));
+
+                request.Content = new StringContent(
+                    JsonSerializer.Serialize(
+                        new ShoppingCartAddModel
+                            {
+                                ProductSku = Product.Sku,
+                                Quantity = productAddToCartModel.Quantity ?? 1
+                            }
+                    ), Encoding.UTF8, "application/json"
+                    );
+
+                await _HttpClient.SendAsync(request);
+
             }
             else
             {
-                await _HttpClient.PutAsJsonAsync("/api/ShoppingCart", new ShoppingCartAddModel()
-                {
-                        ProductSku = Product.Sku,
-                        Quantity = productAddToCartModel.Quantity ?? 1
-                });
+                var request = new HttpRequestMessage(HttpMethod.Put, "/api/ShoppingCart");
+
+                request.Headers.Add("Authorization", configuration.GetValue<string>("ApiKey"));
+
+                request.Content = new StringContent(
+                    JsonSerializer.Serialize(
+                        new ShoppingCartAddModel
+                            {
+                                ProductSku = Product.Sku,
+                                Quantity = productAddToCartModel.Quantity ?? 1
+                            }
+                    ), Encoding.UTF8, "application/json"
+                    );
+
+                await _HttpClient.SendAsync(request);
             }
 
             HasProductInCart = await _HttpClient.GetFromJsonAsync<bool>(
