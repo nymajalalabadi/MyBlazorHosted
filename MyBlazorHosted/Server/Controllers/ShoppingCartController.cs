@@ -24,19 +24,19 @@ namespace MyBlazorHosted.Server.Controllers
 
         #endregion
 
-        [HttpGet, RequiresAuthorizationHeader]
+        [HttpGet]
         public ShoppingCartModel GetCart()
         {
             return _shoppingCartService.Get();
         }
 
-        [HttpGet("count"), RequiresAuthorizationHeader]
+        [HttpGet("count")]
         public int GetCount()
         { 
             return _shoppingCartService.Count();
         }
 
-        [HttpGet("has-product/{sku}"), RequiresAuthorizationHeader]
+        [HttpGet("has-product/{sku}")]
         public bool HasProduct(string sku)
         {
             return _shoppingCartService.HasProduct(sku);
@@ -72,7 +72,7 @@ namespace MyBlazorHosted.Server.Controllers
             return Ok(new { Success = true });
         }
 
-        [HttpDelete("{sku}"), RequiresAuthorizationHeader]
+        [HttpDelete("{sku}")]
         public IActionResult DeleteProduct(string sku)
         {
             var cart = _shoppingCartService.Get();
