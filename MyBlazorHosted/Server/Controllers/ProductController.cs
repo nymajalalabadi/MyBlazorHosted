@@ -10,11 +10,13 @@ namespace MyBlazorHosted.Server.Controllers
     {
         #region consractor
 
-        IProductService _productService;
+        private IProductService _productService;
+        private ILogger<ProductController> _logger;
 
-        public ProductController(IProductService productService)
+        public ProductController(IProductService productService, ILogger<ProductController> logger)
         {
             _productService = productService;
+            _logger = logger;
         }
 
         #endregion
@@ -27,6 +29,8 @@ namespace MyBlazorHosted.Server.Controllers
             {
                 return _productService.GetAll();
             }
+
+            _logger.LogWarning("Get All Product from controller");
 
             return _productService.GetAll(size.Value, page);
         }
