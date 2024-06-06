@@ -7,6 +7,7 @@
 @inject HttpClient _HttpClient
 @inject NavigationManager navigationManager
 @inject IConfiguration configuration
+@inject LoggerFactory _loggerFactory
 
 @if (Product != null)
 {
@@ -117,6 +118,9 @@ else
             Product = await _HttpClient.GetFromJsonAsync<ProductModel>(
                 "/api/Product/by-slug/" + slug
             );
+
+            var logger = _loggerFactory.CreateLogger<ProductDetails>();
+            logger.LogInformation("product is set");
 
             if (Product != null)
             {
