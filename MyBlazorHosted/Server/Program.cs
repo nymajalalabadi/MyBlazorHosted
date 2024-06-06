@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.ResponseCompression;
 using MyBlazorHosted.Libraries.Product;
 using MyBlazorHosted.Libraries.ShoppingCart;
 using MyBlazorHosted.Libraries.Storage;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,6 +14,8 @@ builder.Services.AddRazorPages();
 builder.Services.AddSingleton<IStorageService, StorageService>();
 builder.Services.AddSingleton<IProductService, ProductService>();
 builder.Services.AddSingleton<IShoppingCartService, ShoppingCartService>();
+
+builder.Host.UseSerilog((hb, lc) => lc.ReadFrom.Configuration(hb.Configuration));
 
 #region Add Cors
 
@@ -41,6 +44,9 @@ else
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
+
+app.UseSerilogIngestion();
+app.UseSerilogRequestLogging();
 
 app.UseHttpsRedirection();
 
