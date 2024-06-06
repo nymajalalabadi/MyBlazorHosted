@@ -17,6 +17,8 @@ var httpClient = new HttpClient
 
 builder.Services.AddScoped(h => httpClient);
 
+builder.Logging.AddConfiguration(builder.Configuration.GetSection("Logging"));
+
 using var response = await httpClient.GetAsync("ProductSettings.json");
 
 using var stream = await response.Content.ReadAsStreamAsync();

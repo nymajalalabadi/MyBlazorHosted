@@ -3,6 +3,7 @@
 @inject NavigationManager navigationManager
 @inject IConfiguration configuration
 @inject HttpClient _HttpClient
+@inject ILogger<ProductListing> _logger
 
 <PageTitle>لیست محصولات</PageTitle>
 <HeadContent>
@@ -71,6 +72,8 @@
                 pageSize
             )
         );
+
+        _logger.LogInformation("Begin Product Listing");
 
         await base.OnParametersSetAsync();
     }
