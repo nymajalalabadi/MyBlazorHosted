@@ -21,10 +21,17 @@
     <hr />
     <div class="row">
         <ErrorBoundary>
-        @foreach (var product in Products)
-        {
-            <ProductItem Product="product" />
-        }
+            <ChildContent>
+                 @foreach (var product in Products)
+                 {
+                      <ProductItem Product="product" />
+                 }
+            </ChildContent>
+            <ErrorContent>
+                <div class="alert alert-danger">
+                    <p>متاسفانه با خطایی مواجه شدیم</p>
+                </div>
+            </ErrorContent>
         </ErrorBoundary>
     </div>
     <div class="row">
