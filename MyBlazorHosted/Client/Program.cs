@@ -5,6 +5,8 @@ using MyBlazorHosted.Libraries.ShoppingCart;
 using MyBlazorHosted.Libraries.Storage;
 using MyBlazorHosted.Client;
 using System.Globalization;
+using Serilog.Extensions.Logging;
+using Serilog;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
@@ -18,6 +20,7 @@ var httpClient = new HttpClient
 builder.Services.AddScoped(h => httpClient);
 
 builder.Logging.AddConfiguration(builder.Configuration.GetSection("Logging"));
+
 
 using var response = await httpClient.GetAsync("ProductSettings.json");
 
@@ -42,6 +45,17 @@ if (responseP.IsSuccessStatusCode)
 }
 
 #endregion
+
+//Serilog
+var levelSwitch = new Serilog.Core.LoggingLevelSwitch();
+
+Log.Logger = new LoggerConfiguration()
+    .Enrich.WithProperty("InstanceId", Guid.NewGuid().ToString("n"))
+    .WriteTo.BrowserHttp(httpClient)
+    .CreateLogger();
+
+builder.Logging.AddProvider(new SerilogLoggerProvider());
+//End Serilog
 
 builder.Services.AddSingleton<IStorageService, StorageService>();
 builder.Services.AddTransient<IProductService, ProductService>();
