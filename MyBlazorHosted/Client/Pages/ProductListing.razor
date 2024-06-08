@@ -20,10 +20,12 @@
     <h2>آخرین محصولات ما</h2>
     <hr />
     <div class="row">
+        <ErrorBoundary>
         @foreach (var product in Products)
         {
             <ProductItem Product="product" />
         }
+        </ErrorBoundary>
     </div>
     <div class="row">
         @if (TotalPageCount > 1)
