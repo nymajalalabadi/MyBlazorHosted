@@ -13,7 +13,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Libraries", "Libraries", "{
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Web", "Web", "{C0A52CEB-CA74-4978-9688-746B651FA384}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyBlazorHosted.Libraries", "MyBlazorHosted.Libraries\MyBlazorHosted.Libraries.csproj", "{125BA6F4-C9DA-4CE3-B4CE-BF2526FC7DF7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyBlazorHosted.Libraries", "MyBlazorHosted.Libraries\MyBlazorHosted.Libraries.csproj", "{125BA6F4-C9DA-4CE3-B4CE-BF2526FC7DF7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

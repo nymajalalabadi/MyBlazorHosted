@@ -97,6 +97,8 @@ else
     [CascadingParameter(Name = "ShopingCartCountModel")]
     private ShopingCartCountModel? shopingCartCountModel { get; set; }
 
+    [CascadingParameter]
+    public Error? Error { get; set; }
 }
 
 @functions 
@@ -112,19 +114,26 @@ else
 
     protected override async Task OnParametersSetAsync()
     {
-        if (!string.IsNullOrEmpty(slug))
+        try
         {
-            Product = await _HttpClient.GetFromJsonAsync<ProductModel>(
-                "/api/Product/by-slug/" + slug
-            );
-
-
-            if (Product != null)
+            if (!string.IsNullOrEmpty(slug))
             {
-                HasProductInCart = await _HttpClient.GetFromJsonAsync<bool>(
-                    "/api/ShoppingCart/has-product/" + Product.Sku
-                    );
+                Product = await _HttpClient.GetFromJsonAsync<ProductModel>(
+                    "/api/Product/by-slug/" + slug
+                );
+
+
+                if (Product != null)
+                {
+                    HasProductInCart = await _HttpClient.GetFromJsonAsync<bool>(
+                        "/api/ShoppingCart/has-product/" + Product.Sku
+                        );
+                }
             }
+        }
+        catch (Exception ex)
+        {
+            Error?.ProcessError(ex);
         }
 
         await base.OnParametersSetAsync();

@@ -20,7 +20,7 @@
     <h2>آخرین محصولات ما</h2>
     <hr />
     <div class="row">
-        <ErrorBoundary>
+        <ErrorBoundary @ref="productErrorBoundary">
             <ChildContent>
                  @foreach (var product in Products)
                  {
@@ -50,6 +50,8 @@
 }
 
 @code {
+    private ErrorBoundary productErrorBoundary;
+
     public IList<ProductModel>? Products { get; set; }
 
     [Parameter, SupplyParameterFromQuery]
@@ -62,6 +64,8 @@
 {
     protected override async Task OnParametersSetAsync()
     {
+        productErrorBoundary?.Recover();
+
         //int pagesSize = int.Parse(configuration["ProductListing:PageSize"]);
         var productConfig = configuration.GetSection("ProductListing");
 
